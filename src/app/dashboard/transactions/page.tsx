@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getTransactionsByMonth } from "@/data/getTransactionsByMonth";
+import { getTransactionYearsRange } from "@/data/getTransactionYearsRange";
 import { format } from "date-fns";
 import { PencilIcon } from "lucide-react";
 import Link from "next/link";
@@ -52,6 +53,8 @@ async function TransactionsPage({
 
   let transactions = await getTransactionsByMonth({ month, year });
 
+  let yearsRange = await getTransactionYearsRange();
+
   return (
     <div className="max-w-screen-xl mx-auto py-10">
       <Breadcrumb>
@@ -75,7 +78,7 @@ async function TransactionsPage({
           <CardTitle className="flex justify-between">
             <span>{format(selectedDate, "MMM yyyy")}</span>
             <div>
-              <Filters year={year} month={month} yearsRange={[]} />
+              <Filters year={year} month={month} yearsRange={yearsRange} />
             </div>
           </CardTitle>
         </CardHeader>
