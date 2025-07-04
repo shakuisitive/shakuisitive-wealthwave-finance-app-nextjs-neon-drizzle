@@ -1,28 +1,32 @@
 "use client";
+
 import { z } from "zod";
 import TransactionForm, {
   transactionFormSchema,
 } from "@/components/common/transaction-form";
 import { type Category } from "@/types/Category";
-import { createTransaction } from "./actions";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { createTransaction } from "../new/actions";
 
-export default function NewTransactionForm({
+function EditTransactionForm({
   categories,
+  transaction,
 }: {
   categories: Category[];
+  transaction: {
+    id: number;
+    description: string;
+    amount: string;
+    transactionDate: string;
+    categoryId: number;
+  };
 }) {
   let router = useRouter();
 
   let handleSubmit = async (data: z.infer<typeof transactionFormSchema>) => {
-    let result = await createTransaction({
-      amount: data.amount,
-      transactionDate: format(data.transactionDate, "yyyy-MM-dd"),
-      categoryId: data.categoryId,
-      description: data.description,
-    });
+    let result: any = {};
 
     if (result.error) {
       toast("Failed to insert the data.", {
@@ -58,5 +62,21 @@ export default function NewTransactionForm({
     );
   };
 
-  return <TransactionForm onSubmit={handleSubmit} categories={categories} />;
+  return (
+    <TransactionForm
+      defaultValues={{
+        amount: Number(transaction.amount),
+        categoryId: transaction.categoryId,
+        description: transaction.description,
+        transactionDate: new Date(transaction.transactionDate),
+        transactionType:
+          categories.find((category) => category.id === transaction.categoryId)
+            ?.type ?? "income",
+      }}
+      onSubmit={handleSubmit}
+      categories={categories}
+    />
+  );
 }
+
+export default EditTransactionForm;

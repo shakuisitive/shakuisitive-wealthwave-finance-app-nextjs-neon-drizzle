@@ -8,8 +8,11 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCategories } from "@/data/getCategories";
+import { getTransaction } from "@/data/getTransaction";
 
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import EditTransactionForm from "./edit-transaction-form";
 
 async function EditTransactionPage({
   params,
@@ -19,10 +22,15 @@ async function EditTransactionPage({
   let { transactionId } = await params;
 
   if (isNaN(Number(transactionId))) {
-    return <div>OOps, transaction not found.</div>;
+    notFound();
   }
 
   let categories = await getCategories();
+  let transaction = await getTransaction(Number(transactionId));
+
+  if (!transaction) {
+    notFound();
+  }
 
   return (
     <div className="max-w-screen-xl mx-auto py-10">
@@ -52,7 +60,12 @@ async function EditTransactionPage({
         <CardHeader>
           <CardTitle>Edit Transaction</CardTitle>
         </CardHeader>
-        <CardContent>edit transaction</CardContent>
+        <CardContent>
+          <EditTransactionForm
+            transaction={transaction}
+            categories={categories}
+          />
+        </CardContent>
       </Card>
     </div>
   );

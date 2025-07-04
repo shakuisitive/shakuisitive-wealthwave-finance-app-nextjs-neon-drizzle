@@ -39,9 +39,19 @@ export let transactionFormSchema = z.object({
     .max(300, "The description must contain a maximum of 300 characters."),
 });
 
-type Props = { categories: Category[], onSubmit: (data: z.infer<typeof transactionFormSchema>) => Promise<void> }
+type Props = {
+  categories: Category[];
+  onSubmit: (data: z.infer<typeof transactionFormSchema>) => Promise<void>;
+  defaultValues?: {
+    transactionType: "income" | "expense";
+    amount: number;
+    categoryId: number;
+    description: string;
+    transactionDate: Date;
+  };
+};
 
-const TransactionForm = ({ categories, onSubmit }: Props) => {
+const TransactionForm = ({ categories, onSubmit, defaultValues }: Props) => {
   let form = useForm<z.infer<typeof transactionFormSchema>>({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
@@ -50,6 +60,7 @@ const TransactionForm = ({ categories, onSubmit }: Props) => {
       description: "",
       transactionDate: new Date(),
       transactionType: "income",
+      ...defaultValues,
     },
   });
 
