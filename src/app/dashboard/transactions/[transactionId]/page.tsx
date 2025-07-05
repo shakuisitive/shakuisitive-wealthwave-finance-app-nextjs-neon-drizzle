@@ -9,9 +9,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCategories } from "@/data/getCategories";
 import { getTransaction } from "@/data/getTransaction";
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import DeleteTransactionDialogue from "./delete-transaction-dialog";
 import EditTransactionForm from "./edit-transaction-form";
 
 async function EditTransactionPage({
@@ -57,8 +57,12 @@ async function EditTransactionPage({
       </Breadcrumb>
 
       <Card className="mt-4 max-w-screen-md">
-        <CardHeader>
+        <CardHeader className="flex justify-between items-center">
           <CardTitle>Edit Transaction</CardTitle>
+          <DeleteTransactionDialogue
+            transactionId={transaction.id}
+            transactionDate={transaction.transactionDate}
+          />
         </CardHeader>
         <CardContent>
           <EditTransactionForm
