@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createTransaction } from "../new/actions";
+import { updateTransaction } from "./actions";
 
 function EditTransactionForm({
   categories,
@@ -26,9 +27,15 @@ function EditTransactionForm({
   let router = useRouter();
 
   let handleSubmit = async (data: z.infer<typeof transactionFormSchema>) => {
-    let result: any = {};
+    let result = await updateTransaction({
+      id: transaction.id,
+      description: data.description,
+      transactionDate: format(data.transactionDate, "yyyy-MM-dd"),
+      amount: data.amount,
+      categoryId: data.categoryId,
+    });
 
-    if (result.error) {
+    if (result?.error) {
       toast("Failed to insert the data.", {
         description: result.message,
         style: {
@@ -44,7 +51,7 @@ function EditTransactionForm({
       return;
     }
 
-    toast(result.message, {
+    toast(result?.message, {
       style: {
         backgroundColor: "#37b24d", // red-500
         color: "white",
