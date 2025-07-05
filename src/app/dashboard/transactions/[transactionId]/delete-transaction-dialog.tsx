@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Trash2Icon } from "lucide-react";
-
+import { deleteTransaction } from "./actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 function DeleteTransactionDialogue({
   transactionId,
   transactionDate,
@@ -21,6 +23,40 @@ function DeleteTransactionDialogue({
   transactionId: number;
   transactionDate: string;
 }) {
+  let router = useRouter();
+  let handleDeleteConfirm = async () => {
+    let result = await deleteTransaction(transactionId);
+
+    if (result?.error) {
+      toast("Failed to insert the data.", {
+        description: result.message,
+        style: {
+          backgroundColor: "#f03e3e", // red-500
+          color: "white",
+        },
+        action: {
+          label: "Understood",
+          onClick: () => console.log("Undo"),
+        },
+      });
+
+      return;
+    }
+
+    toast(result?.message, {
+      style: {
+        backgroundColor: "#37b24d", // red-500
+        color: "white",
+      },
+      action: {
+        label: "Understood",
+        onClick: () => console.log("Undo"),
+      },
+    });
+    let [year, month] = transactionDate.split("-");
+
+    router.push(`/dashboard/transactions?month=${month}&year=${year}`);
+  };
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -41,7 +77,11 @@ function DeleteTransactionDialogue({
           <AlertDialogCancel className="cursor-pointer">
             Cancel
           </AlertDialogCancel>
-          <Button variant="destructive" className="cursor-pointer">
+          <Button
+            onClick={handleDeleteConfirm}
+            variant="destructive"
+            className="cursor-pointer"
+          >
             Delete
           </Button>
         </AlertDialogFooter>
